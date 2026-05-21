@@ -13,7 +13,7 @@ try {
 
    Connection con = DriverManager.getConnection(url, user, pass);
 
-    con = DriverManager.getConnection(url, user, password);
+    con = DriverManager.getConnection(url, user, pass);
 
     out.println("<h3 style='color:green;'>Database Connected Successfully!</h3>");
 
