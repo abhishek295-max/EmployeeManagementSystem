@@ -7,11 +7,11 @@ try {
 
     Class.forName("com.mysql.cj.jdbc.Driver");
 
-    String url =
-    "jdbc:mysql://kodama.proxy.rlwy.net:13675/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+   String url = System.getenv("DB_URL");
+   String user = System.getenv("DB_USER");
+   String pass = System.getenv("DB_PASS");
 
-    String user = "root";
-    String password = "IJbXCoyUdkhVGDixhECRWJdDPAkbJKxd";
+   Connection con = DriverManager.getConnection(url, user, pass);
 
     con = DriverManager.getConnection(url, user, password);
 
