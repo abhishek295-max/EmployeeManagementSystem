@@ -7,11 +7,9 @@ try {
 
     Class.forName("com.mysql.cj.jdbc.Driver");
 
-   String url = System.getenv("DB_URL");
-   String user = System.getenv("DB_USER");
-   String pass = System.getenv("DB_PASS");
-
-   Connection con = DriverManager.getConnection(url, user, pass);
+    String url = System.getenv("DB_URL");
+    String user = System.getenv("DB_USER");
+    String pass = System.getenv("DB_PASS");
 
     con = DriverManager.getConnection(url, user, pass);
 
