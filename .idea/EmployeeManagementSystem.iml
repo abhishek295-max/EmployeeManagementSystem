@@ -7,5 +7,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="mysql-connector-j-8.4.0" level="project" />
     <orderEntry type="library" name="mysql-connector-j-8.4.0 (2)" level="project" />
+    <orderEntry type="library" exported="" name="json-20240303" level="project" />
   </component>
 </module>

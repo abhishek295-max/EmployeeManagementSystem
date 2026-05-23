@@ -685,6 +685,87 @@ body {
     .p-card { width: 100%; max-width: 340px; }
     .topbar { padding: 0 20px; }
 }
+
+   /* AI Floating Button */
+.ai-chat-btn{
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#0a7a58,#2a64e6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 8px 30px rgba(10,122,88,0.35);
+    animation: pulseAI 2s infinite;
+    transition: 0.3s;
+}
+
+.ai-chat-btn:hover{
+    transform: scale(1.08);
+}
+
+/* Popup */
+.ai-chat-popup{
+    position: fixed;
+    bottom: 110px;
+    right: 25px;
+    width: 380px;
+    height: 550px;
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    z-index: 9999;
+    display: none;
+    border: 1px solid rgba(10,122,88,0.2);
+}
+
+.ai-chat-popup.show{
+    display: block;
+}
+
+/* Header */
+.ai-header{
+    height: 60px;
+    background: linear-gradient(135deg,#0a7a58,#2a64e6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    font-weight: 600;
+}
+
+.ai-header button{
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* iframe */
+.ai-chat-popup iframe{
+    width: 100%;
+    height: calc(100% - 60px);
+    border: none;
+}
+
+@media(max-width:768px){
+    .ai-chat-popup{
+        width: 95%;
+        height: 80vh;
+        right: 10px;
+        bottom: 90px;
+    }
+}
 </style>
 </head>
 <body>
@@ -853,9 +934,34 @@ body {
     </div>
 </section>
 
+<!-- AI Floating Button -->
+<div class="ai-chat-btn" onclick="toggleAIChat()">
+    <i class="bi bi-robot"></i>
+</div>
+
+<!-- AI Chat Popup -->
+<div class="ai-chat-popup" id="aiPopup">
+
+    <div class="ai-header">
+        <div>
+            <i class="bi bi-robot"></i>
+            AI Assistant
+        </div>
+
+        <button onclick="toggleAIChat()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <iframe src="ai-chat.jsp"></iframe>
+
+</div>
+
 <footer class="site-footer">
     &copy; 2026 Employee Management System &nbsp;&mdash;&nbsp; All Rights Reserved &nbsp;&mdash;&nbsp; Built by <strong style="color:rgba(10,50,30,0.55);">Abhishek Samadhiya</strong>
 </footer>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -865,7 +971,13 @@ function tick() {
 }
 tick();
 setInterval(tick, 1000);
+
+function toggleAIChat(){
+    document.getElementById("aiPopup")
+    .classList.toggle("show");
+}
 </script>
+
 
 </body>
 </html>
