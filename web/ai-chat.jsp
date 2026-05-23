@@ -15,12 +15,7 @@ if(question != null && !question.trim().isEmpty()) {
         String apiKey =
         System.getenv("OPENROUTER_API_KEY");
 
-        // Fallback API key
-        if(apiKey == null || apiKey.trim().isEmpty()) {
 
-            apiKey =
-            "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";
-        }
 
         // ========= API URL =========
         URL url = new URL(
