@@ -12,7 +12,7 @@
 <style>
 body{
     margin:0;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
     background:#f5f5f5;
 }
 
@@ -48,6 +48,7 @@ body{
     margin:10px 0;
     border-radius:15px;
     font-size:15px;
+    word-wrap:break-word;
 }
 
 .user{
@@ -89,8 +90,13 @@ body{
     border:none;
     width:60px;
 }
+
+.send-btn:hover{
+    background:#086648;
+}
 </style>
 </head>
+
 <body>
 
 <div class="chat-container">
@@ -103,86 +109,162 @@ body{
         </div>
     </div>
 
-    <div class="chat-box" id="chatBox" role="log" aria-live="polite">
-        <div class="msg bot">👋 Hello! I am EMS AI Assistant. Ask me anything.</div>
+    <div class="chat-box" id="chatBox">
+        <div class="msg bot">
+            👋 Hello! I am EMS AI Assistant. Ask me anything.
+        </div>
     </div>
 
     <div class="input-area">
         <div class="input-group">
+
             <input type="text"
                    id="message"
                    class="form-control"
                    placeholder="Type message..."
                    onkeypress="if(event.key==='Enter') sendMessage()"
-                   aria-label="Message input"
                    autofocus>
 
-            <button type="button" class="send-btn" onclick="sendMessage()" aria-label="Send message">
+            <button type="button"
+                    class="send-btn"
+                    onclick="sendMessage()">
                 <i class="bi bi-send-fill"></i>
             </button>
+
         </div>
     </div>
 
 </div>
 
 <script>
-function sendMessage(){
-    const input = document.getElementById("message");
-    const text = input.value.trim();
+
+const API_KEY = "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";
+
+async function sendMessage(){
+
+    const input =
+    document.getElementById("message");
+
+    const text =
+    input.value.trim();
+
     if(!text) return;
 
-    const chatBox = document.getElementById("chatBox");
+    const chatBox =
+    document.getElementById("chatBox");
 
-    // create user message element (use textContent to avoid HTML injection)
-    const userMsg = document.createElement('div');
-    userMsg.className = 'msg user';
+    // User Message
+    const userMsg =
+    document.createElement("div");
+
+    userMsg.className = "msg user";
     userMsg.textContent = text;
+
     chatBox.appendChild(userMsg);
 
-    // clear and focus
-    input.value = '';
-    input.focus();
+    input.value = "";
 
-    // scroll to bottom for user's message
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.scrollTop =
+    chatBox.scrollHeight;
 
-    // simulate AI typing and generate a reply
-    setTimeout(()=>{
-        const reply = generateReply(text);
+    // Typing Message
+    const loadingMsg =
+    document.createElement("div");
 
-        const botMsg = document.createElement('div');
-        botMsg.className = 'msg bot';
-        botMsg.textContent = reply;
+    loadingMsg.className = "msg bot";
+    loadingMsg.textContent =
+    "Typing...";
+
+    chatBox.appendChild(loadingMsg);
+
+    try {
+
+        const response =
+        await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+            method:"POST",
+
+            headers:{
+                "Authorization":
+                `Bearer ${API_KEY}`,
+
+                "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+
+                model:
+                "openai/gpt-3.5-turbo",
+
+                messages:[
+                    {
+                        role:"system",
+                        content:
+                        "You are EMS AI Assistant for Employee Management System."
+                    },
+                    {
+                        role:"user",
+                        content:text
+                    }
+                ]
+            })
+        });
+
+        const data =
+        await response.json();
+
+        loadingMsg.remove();
+
+        const reply =
+        data.choices?.[0]
+        ?.message?.content
+        || "No response";
+
+        const botMsg =
+        document.createElement("div");
+
+        botMsg.className =
+        "msg bot";
+
+        botMsg.textContent =
+        reply;
+
         chatBox.appendChild(botMsg);
 
-        // scroll after bot reply
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 700);
+        chatBox.scrollTop =
+        chatBox.scrollHeight;
+
+    } catch(error){
+
+        loadingMsg.remove();
+
+        const botMsg =
+        document.createElement("div");
+
+        botMsg.className =
+        "msg bot";
+
+        botMsg.textContent =
+        "❌ Error connecting to OpenRouter API";
+
+        chatBox.appendChild(botMsg);
+    }
 }
 
-// Simple reply generator - keep logic in one place
-function generateReply(text){
-    const msg = text.toLowerCase();
-    if(msg.includes('hello') || msg.includes('hi')){
-        return 'Hello 👋 How can I help you?';
-    }
-    if(msg.includes('leave')){
-        return 'You can apply leave from the HR panel (HR -> Leave Management).';
-    }
-    if(msg.includes('salary') || msg.includes('pay')){
-        return 'Salary details are available in the Payroll section.';
-    }
-    if(msg.includes('attendance') || msg.includes('present')){
-        return 'Attendance reports are available on your dashboard.';
-    }
-    return "Sorry, I don't understand that yet 🤖";
-}
+document.addEventListener(
+"DOMContentLoaded",
+function(){
 
-// keep chat scrolled to bottom on initial load
-document.addEventListener('DOMContentLoaded', function(){
-    const cb = document.getElementById('chatBox');
-    if(cb) cb.scrollTop = cb.scrollHeight;
+    const chatBox =
+    document.getElementById(
+    "chatBox");
+
+    chatBox.scrollTop =
+    chatBox.scrollHeight;
 });
+
 </script>
 
 </body>
