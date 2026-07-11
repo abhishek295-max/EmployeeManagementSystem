@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Management System</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e2f4ee;
+    background-image:
+        radial-gradient(ellipse 80% 65% at 0% 0%,    rgba(20,140,100,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 65% 55% at 100% 100%, rgba(42,100,230,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 50% 50%,  rgba(100,50,180,0.06) 0%, transparent 70%);
+    min-height: 100vh;
+    color: #0f2a1e;
+}
+
+.dot-grid {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(10,80,50,0.07) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(210,240,228,0.90);
+    border-bottom: 1px solid rgba(20,120,80,0.14);
+    backdrop-filter: blur(16px);
+    padding: 0 32px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 16px rgba(10,80,50,0.08);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    background: #0a7a58;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    color: #fff;
+    box-shadow: 0 2px 14px rgba(10,122,88,0.35);
+}
+
+.brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0a2018;
+    letter-spacing: -0.1px;
+}
+
+.brand-name span { color: #0a7a58; }
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+}
+
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(10,50,30,0.55);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.nav-links li a:hover {
+    background: rgba(10,122,88,0.10);
+    color: #0a5c42;
+}
+
+.nav-links li a.active-nav {
+    background: rgba(10,122,88,0.12);
+    color: #0a7a58;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.online-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(10,122,88,0.10);
+    border: 1px solid rgba(10,122,88,0.22);
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #0a7a58;
+}
+
+.green-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0a9a6e;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.clock {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.65);
+    border: 1px solid rgba(10,80,50,0.14);
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: rgba(10,45,28,0.62);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.3px;
+    box-shadow: 0 1px 6px rgba(10,80,50,0.06);
+}
+
+.hamburger {
+    display: none;
+    background: none;
+    border: 1px solid rgba(10,80,50,0.18);
+    color: rgba(10,50,30,0.55);
+    border-radius: 7px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.hero {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 80px 24px 56px;
+}
+
+.hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(10,122,88,0.10);
+    border: 1px solid rgba(10,122,88,0.24);
+    padding: 5px 16px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #0a7a58;
+    margin-bottom: 22px;
+}
+
+.hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.2rem);
+    font-weight: 800;
+    color: #071a10;
+    line-height: 1.12;
+    letter-spacing: -0.8px;
+    margin-bottom: 16px;
+}
+
+.hero h1 em {
+    font-style: normal;
+    color: #0a7a58;
+}
+
+.hero p {
+    font-size: 0.96rem;
+    color: rgba(10,50,30,0.52);
+    max-width: 460px;
+    margin: 0 auto 36px;
+    line-height: 1.75;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #0a7a58;
+    border: none;
+    color: #fff;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 18px rgba(10,122,88,0.30);
+}
+
+.hero-btn-primary:hover { background: #0b9a6e; transform: translateY(-2px); color: #fff; box-shadow: 0 8px 24px rgba(10,122,88,0.36); }
+
+.hero-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(10,80,50,0.18);
+    color: rgba(10,50,30,0.62);
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.hero-btn-ghost:hover { background: rgba(255,255,255,0.80); border-color: rgba(10,122,88,0.28); color: #0a5c42; }
+
+.stats-strip {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 0 24px 60px;
+}
+
+.stats-inner {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 1px;
+    background: rgba(10,80,50,0.12);
+    border: 1px solid rgba(10,80,50,0.12);
+    border-radius: 14px;
+    overflow: hidden;
+    max-width: 680px;
+    width: 100%;
+    box-shadow: 0 3px 16px rgba(10,80,50,0.08);
+}
+
+.s-cell {
+    background: rgba(255,255,255,0.60);
+    text-align: center;
+    padding: 18px 12px;
+}
+
+.s-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #071a10;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.s-lbl {
+    font-size: 0.63rem;
+    font-weight: 600;
+    color: rgba(10,50,30,0.42);
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+}
+
+.section {
+    position: relative;
+    z-index: 2;
+    padding: 0 24px 72px;
+}
+
+.section-center {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.sec-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(10,122,88,0.65);
+    margin-bottom: 8px;
+}
+
+.sec-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #071a10;
+    letter-spacing: -0.4px;
+}
+
+.cards-row {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.p-card {
+    width: 265px;
+    background: rgba(255,255,255,0.70);
+    border: 1px solid rgba(10,80,50,0.12);
+    border-radius: 18px;
+    padding: 28px 24px 22px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.20s, border-color 0.20s, background 0.20s, box-shadow 0.20s;
+    box-shadow: 0 2px 14px rgba(10,80,50,0.07);
+}
+
+.p-card:hover { transform: translateY(-8px); color: inherit; text-decoration: none; }
+
+.p-card.c-admin:hover { border-color: rgba(42,100,230,0.36); background: rgba(255,255,255,0.90); box-shadow: 0 18px 44px rgba(42,100,230,0.14); }
+.p-card.c-hr:hover    { border-color: rgba(10,122,88,0.40);   background: rgba(255,255,255,0.90); box-shadow: 0 18px 44px rgba(10,122,88,0.14); }
+.p-card.c-emp:hover   { border-color: rgba(124,58,237,0.36);  background: rgba(255,255,255,0.90); box-shadow: 0 18px 44px rgba(124,58,237,0.14); }
+
+.p-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 17px;
+}
+
+.icon-a { background: rgba(42,100,230,0.10);  color: #2a64e6; border: 1px solid rgba(42,100,230,0.18); }
+.icon-h { background: rgba(10,122,88,0.12);   color: #0a7a58; border: 1px solid rgba(10,122,88,0.20); }
+.icon-e { background: rgba(124,58,237,0.10);  color: #7c3aed; border: 1px solid rgba(124,58,237,0.18); }
+
+.card-tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+}
+
+.ct-a { color: #2a64e6; }
+.ct-h { color: #0a7a58; }
+.ct-e { color: #7c3aed; }
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0a1e14;
+    margin-bottom: 7px;
+}
+
+.card-desc {
+    font-size: 0.78rem;
+    color: rgba(10,50,30,0.50);
+    line-height: 1.62;
+    flex: 1;
+    margin-bottom: 16px;
+}
+
+.card-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 16px;
+}
+
+.chip {
+    font-size: 0.61rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 6px;
+}
+
+.chip-a { background: rgba(42,100,230,0.08);  color: #2a55c8; border: 1px solid rgba(42,100,230,0.16); }
+.chip-h { background: rgba(10,122,88,0.10);   color: #0a6848; border: 1px solid rgba(10,122,88,0.18); }
+.chip-e { background: rgba(124,58,237,0.08);  color: #6d30c8; border: 1px solid rgba(124,58,237,0.16); }
+
+.card-divider { height: 1px; background: rgba(10,80,50,0.10); margin-bottom: 15px; }
+
+.card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.go-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+.go-btn:hover { opacity: 0.87; transform: scale(1.02); color: #fff; text-decoration: none; }
+
+.gbtn-a { background: #2a64e6; box-shadow: 0 3px 12px rgba(42,100,230,0.26); }
+.gbtn-h { background: #0a7a58; box-shadow: 0 3px 12px rgba(10,122,88,0.28); }
+.gbtn-e { background: #7c3aed; box-shadow: 0 3px 12px rgba(124,58,237,0.26); }
+
+.arrow-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(10,80,50,0.08);
+    border: 1px solid rgba(10,80,50,0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: rgba(10,50,30,0.38);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.feat-card {
+    background: rgba(255,255,255,0.65);
+    border: 1px solid rgba(10,80,50,0.10);
+    border-radius: 14px;
+    padding: 22px 20px;
+    box-shadow: 0 2px 10px rgba(10,80,50,0.06);
+    transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+}
+
+.feat-card:hover {
+    background: rgba(255,255,255,0.88);
+    border-color: rgba(10,122,88,0.24);
+    box-shadow: 0 6px 22px rgba(10,122,88,0.10);
+}
+
+.feat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(10,122,88,0.10);
+    border: 1px solid rgba(10,122,88,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #0a7a58;
+    margin-bottom: 14px;
+}
+
+.feat-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0a1e14;
+    margin-bottom: 6px;
+}
+
+.feat-desc {
+    font-size: 0.76rem;
+    color: rgba(10,50,30,0.48);
+    line-height: 1.6;
+}
+
+.about-section {
+    position: relative;
+    z-index: 2;
+    padding: 0 24px 80px;
+}
+
+.about-card {
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(10,80,50,0.12);
+    border-radius: 20px;
+    padding: 40px 36px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 36px;
+    align-items: start;
+    box-shadow: 0 8px 36px rgba(10,80,50,0.10);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0a7a58, #2a64e6, #7c3aed);
+}
+
+.about-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0a7a58, #2a64e6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 28px rgba(10,122,88,0.28);
+    letter-spacing: -1px;
+}
+
+.about-dev-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(10,122,88,0.10);
+    border: 1px solid rgba(10,122,88,0.22);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #0a7a58;
+    margin-bottom: 10px;
+}
+
+.about-name {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #071a10;
+    letter-spacing: -0.4px;
+    margin-bottom: 6px;
+    line-height: 1.1;
+}
+
+.about-location {
+    font-size: 0.78rem;
+    color: rgba(10,50,30,0.48);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 16px;
+}
+
+.about-bio {
+    font-size: 0.86rem;
+    color: rgba(10,50,30,0.56);
+    line-height: 1.78;
+    margin-bottom: 20px;
+    max-width: 540px;
+}
+
+.about-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 22px;
+}
+
+.about-tag {
+    font-size: 0.71rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 7px;
+    background: rgba(10,122,88,0.08);
+    border: 1px solid rgba(10,122,88,0.16);
+    color: rgba(10,60,40,0.65);
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.about-tag:hover { background: rgba(10,122,88,0.14); border-color: rgba(10,122,88,0.26); color: #0a5c42; }
+
+.about-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1px;
+    background: rgba(10,122,88,0.14);
+    border: 1px solid rgba(10,122,88,0.16);
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 380px;
+}
+
+.astat-cell {
+    background: rgba(255,255,255,0.70);
+    padding: 14px 12px;
+    text-align: center;
+}
+
+.astat-val {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #071a10;
+    line-height: 1;
+    margin-bottom: 3px;
+}
+
+.astat-lbl {
+    font-size: 0.63rem;
+    color: rgba(10,50,30,0.44);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    font-weight: 500;
+}
+
+.about-bottom-note {
+    padding: 14px 20px;
+    background: rgba(10,122,88,0.06);
+    border: 1px solid rgba(10,122,88,0.14);
+    border-radius: 10px;
+    font-size: 0.78rem;
+    color: rgba(10,50,30,0.50);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 900px;
+    margin: 24px auto 0;
+}
+
+.site-footer {
+    position: relative;
+    z-index: 2;
+    background: rgba(180,230,210,0.60);
+    border-top: 1px solid rgba(10,80,50,0.12);
+    text-align: center;
+    padding: 14px 20px;
+    font-size: 0.72rem;
+    color: rgba(10,50,30,0.45);
+}
+
+@media (max-width: 900px) {
+    .features-grid { grid-template-columns: repeat(2,1fr); }
+    .about-card { grid-template-columns: 1fr; text-align: center; }
+    .about-avatar { margin: 0 auto; }
+    .about-stats { margin: 0 auto; }
+    .about-tags { justify-content: center; }
+    .about-location { justify-content: center; }
+    .about-bottom-note { text-align: center; justify-content: center; }
+}
+
+@media (max-width: 768px) {
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 62px; left: 0; right: 0; background: rgba(210,240,228,0.98); border-bottom: 1px solid rgba(10,80,50,0.12); padding: 12px 16px; gap: 4px; z-index: 100; }
+    .nav-links.show { display: flex; }
+    .hamburger { display: block; }
+    .clock { font-size: 0.68rem; padding: 3px 9px; }
+    .stats-inner { grid-template-columns: repeat(2,1fr); }
+    .features-grid { grid-template-columns: 1fr; }
+    .p-card { width: 100%; max-width: 340px; }
+    .topbar { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="dot-grid"></div>
+
+<nav class="topbar">
+    <a href="#home" class="brand">
+        <div class="brand-icon"><i class="bi bi-buildings-fill"></i></div>
+        <span class="brand-name">Employee Management System <span>Pro</span></span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="active-nav"><i class="bi bi-house-door-fill"></i> Home</a></li>
+        <li><a href="hr-login.jsp"><i class="bi bi-people-fill"></i> HR</a></li>
+        
+        <li><a href="#panels"><i class="bi bi-grid-3x3-gap-fill"></i> Panels</a></li>
+        <li><a href="#about"><i class="bi bi-info-circle-fill"></i> About</a></li>
+    </ul>
+
+    <div class="nav-right">
+        <div class="online-pill"><span class="green-dot"></span> Online</div>
+        <div class="clock"><i class="bi bi-clock"></i><span id="clk"></span></div>
+        <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('show')">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+</nav>
+
+<section class="hero" id="home">
+    <div class="hero-pill"><i class="bi bi-stars"></i> Enterprise HR Platform v3.0</div>
+    <h1>Manage Your Workforce<br>with <em>Precision</em></h1>
+    <p>A unified portal for administrators, HR teams, and employees — built to simplify every aspect of workforce management.</p>
+    <div class="hero-btns">
+        <a href="#panels" class="hero-btn-primary"><i class="bi bi-grid-3x3-gap-fill"></i> Access Panels</a>
+        <a href="#about" class="hero-btn-ghost"><i class="bi bi-info-circle"></i> About This Project</a>
+    </div>
+</section>
+
+<div class="stats-strip">
+    <div class="stats-inner">
+        <div class="s-cell"><div class="s-val">1,284</div><div class="s-lbl">Employees</div></div>
+        <div class="s-cell"><div class="s-val">97%</div><div class="s-lbl">Attendance</div></div>
+        <div class="s-cell"><div class="s-val">34</div><div class="s-lbl">Requests</div></div>
+        <div class="s-cell"><div class="s-val">99.9%</div><div class="s-lbl">Uptime</div></div>
+    </div>
+</div>
+
+<section class="section" id="panels">
+    <div class="section-center">
+        <div class="sec-eyebrow">Access Portal</div>
+        <div class="sec-title">Select Your Panel</div>
+    </div>
+    <div class="cards-row">
+
+        <a href="admin-login.jsp" class="p-card c-admin">
+            <div class="p-icon icon-a"><i class="bi bi-shield-lock-fill"></i></div>
+            <div class="card-tag ct-a">Restricted Access</div>
+            <div class="card-title">Admin Panel</div>
+            <div class="card-desc">Full platform control — manage users, roles, system settings and audit logs.</div>
+            <div class="card-chips">
+                <span class="chip chip-a">System Config</span>
+                <span class="chip chip-a">User Mgmt</span>
+                <span class="chip chip-a">Audit Logs</span>
+                <span class="chip chip-a">Full Access</span>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-footer-row">
+                <span class="go-btn gbtn-a"><i class="bi bi-box-arrow-in-right"></i> Admin Login</span>
+                <div class="arrow-circle"><i class="bi bi-arrow-up-right"></i></div>
+            </div>
+        </a>
+
+        <a href="hr-login.jsp" class="p-card c-hr">
+            <div class="p-icon icon-h"><i class="bi bi-people-fill"></i></div>
+            <div class="card-tag ct-h">HR Management</div>
+            <div class="card-title">HR Panel</div>
+            <div class="card-desc">Manage employees, payroll, attendance, leave approvals and onboarding.</div>
+            <div class="card-chips">
+                <span class="chip chip-h">Payroll</span>
+                <span class="chip chip-h">Onboarding</span>
+                <span class="chip chip-h">Leave Approval</span>
+                <span class="chip chip-h">Reports</span>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-footer-row">
+                <span class="go-btn gbtn-h"><i class="bi bi-box-arrow-in-right"></i> HR Login</span>
+                <div class="arrow-circle"><i class="bi bi-arrow-up-right"></i></div>
+            </div>
+        </a>
+
+        
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-center">
+        <div class="sec-eyebrow">Platform Capabilities</div>
+        <div class="sec-title">Everything in One Place</div>
+    </div>
+    <div class="features-grid">
+        <div class="feat-card">
+            <div class="feat-icon"><i class="bi bi-person-check-fill"></i></div>
+            <div class="feat-title">Attendance Tracking</div>
+            <div class="feat-desc">Real-time punch-in/out monitoring with shift reports and anomaly alerts.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon"><i class="bi bi-cash-stack"></i></div>
+            <div class="feat-title">Payroll Management</div>
+            <div class="feat-desc">Automated salary computation, tax calculations and instant payslip generation.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon"><i class="bi bi-calendar2-check-fill"></i></div>
+            <div class="feat-title">Leave Management</div>
+            <div class="feat-desc">Smart leave request workflows with multi-level approvals and calendar sync.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon"><i class="bi bi-bar-chart-fill"></i></div>
+            <div class="feat-title">Analytics & Reports</div>
+            <div class="feat-desc">Insightful dashboards with exportable reports for compliance and strategy.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon"><i class="bi bi-shield-check-fill"></i></div>
+            <div class="feat-title">Role-Based Access</div>
+            <div class="feat-desc">Granular permission controls ensuring data security across all user levels.</div>
+        </div>
+        <div class="feat-card">
+            <div class="feat-icon"><i class="bi bi-folder-fill"></i></div>
+            <div class="feat-title">Document Management</div>
+            <div class="feat-desc">Securely upload, store and download employee documents anytime.</div>
+        </div>
+    </div>
+</section>
+
+<section class="about-section" id="about">
+    <div class="section-center">
+        <div class="sec-eyebrow">About the Developer</div>
+        <div class="sec-title">Meet the Creator</div>
+    </div>
+    <div class="about-card">
+        <div class="about-avatar">AS</div>
+        <div>
+            <div class="about-dev-tag"><i class="bi bi-code-slash"></i> Full Stack Developer</div>
+            <div class="about-name">Abhishek Samadhiya</div>
+            <div class="about-location"><i class="bi bi-geo-alt-fill"></i> Jabalpur, Madhya Pradesh, India</div>
+            <p class="about-bio">A passionate software developer specializing in enterprise application development and modern web technologies. Abhishek designed and built EMS Pro as a comprehensive workforce management solution — combining a robust Java backend with a clean, professional frontend. With a strong focus on usability and scalability, the platform aims to simplify HR operations for organizations of all sizes.</p>
+            <div class="about-tags">
+                <span class="about-tag">Java</span>
+                <span class="about-tag">JSP / Servlets</span>
+                <span class="about-tag">Bootstrap 5</span>
+                <span class="about-tag">MySQL</span>
+                <span class="about-tag">HTML / CSS / JS</span>
+                <span class="about-tag">REST APIs</span>
+                <span class="about-tag">Apache Tomcat</span>
+            </div>
+            <div class="about-stats">
+                <div class="astat-cell"><div class="astat-val">1+</div><div class="astat-lbl">Years Exp.</div></div>
+                <div class="astat-cell"><div class="astat-val">7+</div><div class="astat-lbl">Projects</div></div>
+                <div class="astat-cell"><div class="astat-val">100%</div><div class="astat-lbl">Dedication</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="about-bottom-note">
+        <span><i class="bi bi-code-slash" style="color:#0a7a58;margin-right:6px;"></i>Employee Management System Pro v3.0 &mdash; Designed &amp; Developed by <strong style="color:rgba(10,50,30,0.72);">Abhishek Samadhiya</strong></span>
+        <span>&copy; 2026 &nbsp;&middot;&nbsp; Jabalpur, Madhya Pradesh, India</span>
+    </div>
+</section>
+
+<footer class="site-footer">
+    &copy; 2026 Employee Management System &nbsp;&mdash;&nbsp; All Rights Reserved &nbsp;&mdash;&nbsp; Built by <strong style="color:rgba(10,50,30,0.55);">Abhishek Samadhiya</strong>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function tick() {
+    var el = document.getElementById('clk');
+    if(el) el.textContent = new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+tick();
+setInterval(tick, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact name="EmployeeManagement">
+    <output-path>$PROJECT_DIR$/out/artifacts/EmployeeManagement</output-path>
+    <root id="root">
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+    </root>
+  </artifact>
+</component>

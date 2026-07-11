@@ -1,0 +1,5 @@
+services:
+  - type: web
+    name: employee-management
+    env: docker
+    plan: free
