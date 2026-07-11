@@ -10,7 +10,7 @@
         con = DriverManager.getConnection(
                 "jdbc:mysql://tokaido.proxy.rlwy.net:23621/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
                 "root",
-                "YOUR_PASSWORD"
+                "lxtmFoAtnKIQNeWhZDOnTOXOzssdBBBU"
         );
 
     } catch (Exception e) {
