@@ -8,9 +8,9 @@
         Class.forName("com.mysql.cj.jdbc.Driver");
 
         con = DriverManager.getConnection(
-                "jdbc:mysql://tokaido.proxy.rlwy.net:23621/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+                "jdbc:mysql://localhost:3306/ems?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
                 "root",
-                "lxtmFoAtnKIQNeWhZDOnTOXOzssdBBBU"
+                "Abhishek295"
         );
 
     } catch (Exception e) {
